@@ -442,6 +442,7 @@ These are enumeration declarations, which are referenced throughout obs-websocke
   - [RequestStatus::NotEnoughResources](#requeststatusnotenoughresources)
   - [RequestStatus::InvalidResourceState](#requeststatusinvalidresourcestate)
   - [RequestStatus::InvalidInputKind](#requeststatusinvalidinputkind)
+  - [RequestStatus::ResourceNotConfigurable](#requeststatusresourcenotconfigurable)
   - [RequestStatus::ResourceCreationFailed](#requeststatusresourcecreationfailed)
   - [RequestStatus::ResourceActionFailed](#requeststatusresourceactionfailed)
   - [RequestStatus::RequestProcessingFailed](#requeststatusrequestprocessingfailed)
@@ -458,6 +459,7 @@ These are enumeration declarations, which are referenced throughout obs-websocke
   - [EventSubscription::SceneItems](#eventsubscriptionsceneitems)
   - [EventSubscription::MediaInputs](#eventsubscriptionmediainputs)
   - [EventSubscription::Vendors](#eventsubscriptionvendors)
+  - [EventSubscription::Ui](#eventsubscriptionui)
   - [EventSubscription::All](#eventsubscriptionall)
   - [EventSubscription::InputVolumeMeters](#eventsubscriptioninputvolumemeters)
   - [EventSubscription::InputActiveStateChanged](#eventsubscriptioninputactivestatechanged)
@@ -1011,6 +1013,18 @@ The specified input (obs_source_t-OBS_SOURCE_TYPE_INPUT) had the wrong kind.
 
 ---
 
+### RequestStatus::ResourceNotConfigurable
+
+The resource does not support being configured.
+
+This is particularly relevant to transitions, where they do not always have changeable settings.
+
+- Identifier Value: `606`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+---
+
 ### RequestStatus::ResourceCreationFailed
 
 Creating the resource failed.
@@ -1162,6 +1176,16 @@ Subscription value to receive the `VendorEvent` event.
 
 ---
 
+### EventSubscription::Ui
+
+Subscription value to receive events in the `Ui` category.
+
+- Identifier Value: `(1 << 10)`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+---
+
 ### EventSubscription::All
 
 Helper to receive all non-high-volume events.
@@ -1216,7 +1240,6 @@ Subscription value to receive the `SceneItemTransformChanged` high-volume event.
 ### Events Table of Contents
 - [General](#general)
   - [ExitStarted](#exitstarted)
-  - [StudioModeStateChanged](#studiomodestatechanged)
   - [VendorEvent](#vendorevent)
 - [Config](#config)
   - [CurrentSceneCollectionChanging](#currentscenecollectionchanging)
@@ -1225,6 +1248,44 @@ Subscription value to receive the `SceneItemTransformChanged` high-volume event.
   - [CurrentProfileChanging](#currentprofilechanging)
   - [CurrentProfileChanged](#currentprofilechanged)
   - [ProfileListChanged](#profilelistchanged)
+- [Scenes](#scenes)
+  - [SceneCreated](#scenecreated)
+  - [SceneRemoved](#sceneremoved)
+  - [SceneNameChanged](#scenenamechanged)
+  - [CurrentProgramSceneChanged](#currentprogramscenechanged)
+  - [CurrentPreviewSceneChanged](#currentpreviewscenechanged)
+  - [SceneListChanged](#scenelistchanged)
+- [Inputs](#inputs)
+  - [InputCreated](#inputcreated)
+  - [InputRemoved](#inputremoved)
+  - [InputNameChanged](#inputnamechanged)
+  - [InputActiveStateChanged](#inputactivestatechanged)
+  - [InputShowStateChanged](#inputshowstatechanged)
+  - [InputMuteStateChanged](#inputmutestatechanged)
+  - [InputVolumeChanged](#inputvolumechanged)
+  - [InputAudioSyncOffsetChanged](#inputaudiosyncoffsetchanged)
+  - [InputAudioTracksChanged](#inputaudiotrackschanged)
+  - [InputAudioMonitorTypeChanged](#inputaudiomonitortypechanged)
+  - [InputVolumeMeters](#inputvolumemeters)
+- [Scene Items](#scene-items)
+  - [SceneItemCreated](#sceneitemcreated)
+  - [SceneItemRemoved](#sceneitemremoved)
+  - [SceneItemListReindexed](#sceneitemlistreindexed)
+  - [SceneItemEnableStateChanged](#sceneitemenablestatechanged)
+  - [SceneItemLockStateChanged](#sceneitemlockstatechanged)
+  - [SceneItemTransformChanged](#sceneitemtransformchanged)
+- [Outputs](#outputs)
+  - [StreamStateChanged](#streamstatechanged)
+  - [RecordStateChanged](#recordstatechanged)
+  - [ReplayBufferStateChanged](#replaybufferstatechanged)
+  - [VirtualcamStateChanged](#virtualcamstatechanged)
+  - [ReplayBufferSaved](#replaybuffersaved)
+- [Media Inputs](#media-inputs)
+  - [MediaInputPlaybackStarted](#mediainputplaybackstarted)
+  - [MediaInputPlaybackEnded](#mediainputplaybackended)
+  - [MediaInputActionTriggered](#mediainputactiontriggered)
+- [Ui](#ui)
+  - [StudioModeStateChanged](#studiomodestatechanged)
 
 
 ## General
@@ -1236,23 +1297,6 @@ OBS has begun the shutdown process.
 - Complexity Rating: `1/5`
 - Latest Supported RPC Version: `1`
 - Added in v5.0.0
-
----
-
-### StudioModeStateChanged
-
-Studio mode has been enabled or disabled.
-
-- Complexity Rating: `1/5`
-- Latest Supported RPC Version: `1`
-- Added in v5.0.0
-
-
-**Data Fields:**
-
-| Name | Type  | Description |
-| ---- | :---: | ----------- |
-| studioModeEnabled | Boolean | True == Enabled, False == Disabled |
 
 ---
 
@@ -1381,6 +1425,590 @@ The profile list has changed.
 | Name | Type  | Description |
 | ---- | :---: | ----------- |
 | profiles | Array&lt;String&gt; | Updated list of profiles |
+## Scenes
+
+### SceneCreated
+
+A new scene has been created.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| sceneName | String | Name of the new scene |
+| isGroup | Boolean | Whether the new scene is a group |
+
+---
+
+### SceneRemoved
+
+A scene has been removed.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| sceneName | String | Name of the removed scene |
+| isGroup | Boolean | Whether the scene was a group |
+
+---
+
+### SceneNameChanged
+
+The name of a scene has changed.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| oldSceneName | String | Old name of the scene |
+| sceneName | String | New name of the scene |
+
+---
+
+### CurrentProgramSceneChanged
+
+The current program scene has changed.
+
+- Complexity Rating: `1/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| sceneName | String | Name of the scene that was switched to |
+
+---
+
+### CurrentPreviewSceneChanged
+
+The current preview scene has changed.
+
+- Complexity Rating: `1/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| sceneName | String | Name of the scene that was switched to |
+
+---
+
+### SceneListChanged
+
+The list of scenes has changed.
+
+TODO: Make OBS fire this event when scenes are reordered.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| scenes | Array&lt;Object&gt; | Updated array of scenes |
+## Inputs
+
+### InputCreated
+
+An input has been created.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| inputName | String | Name of the input |
+| inputKind | String | The kind of the input |
+| unversionedInputKind | String | The unversioned kind of input (aka no `_v2` stuff) |
+| inputSettings | Object | The settings configured to the input when it was created |
+| defaultInputSettings | Object | The default settings for the input |
+
+---
+
+### InputRemoved
+
+An input has been removed.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| inputName | String | Name of the input |
+
+---
+
+### InputNameChanged
+
+The name of an input has changed.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| oldInputName | String | Old name of the input |
+| inputName | String | New name of the input |
+
+---
+
+### InputActiveStateChanged
+
+An input's active state has changed.
+
+When an input is active, it means it's being shown by the program feed.
+
+- Complexity Rating: `3/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| inputName | String | Name of the input |
+| videoActive | Boolean | Whether the input is active |
+
+---
+
+### InputShowStateChanged
+
+An input's show state has changed.
+
+When an input is showing, it means it's being shown by the preview or a dialog.
+
+- Complexity Rating: `3/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| inputName | String | Name of the input |
+| videoShowing | Boolean | Whether the input is showing |
+
+---
+
+### InputMuteStateChanged
+
+An input's mute state has changed.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| inputName | String | Name of the input |
+| inputMuted | Boolean | Whether the input is muted |
+
+---
+
+### InputVolumeChanged
+
+An input's volume level has changed.
+
+- Complexity Rating: `3/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| inputName | String | Name of the input |
+| inputVolumeMul | Number | New volume level in multimap |
+| inputVolumeDb | Number | New volume level in dB |
+
+---
+
+### InputAudioSyncOffsetChanged
+
+The sync offset of an input has changed.
+
+- Complexity Rating: `3/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| inputName | String | Name of the input |
+| inputAudioSyncOffset | Number | New sync offset in milliseconds |
+
+---
+
+### InputAudioTracksChanged
+
+The audio tracks of an input have changed.
+
+- Complexity Rating: `3/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| inputName | String | Name of the input |
+| inputAudioTracks | Array&lt;Boolean&gt; | Array of audio tracks along with their associated enable states |
+
+---
+
+### InputAudioMonitorTypeChanged
+
+The monitor type of an input has changed.
+
+Available types are:
+- `OBS_MONITORING_TYPE_NONE`
+- `OBS_MONITORING_TYPE_MONITOR_ONLY`
+- `OBS_MONITORING_TYPE_MONITOR_AND_OUTPUT`
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| inputName | String | Name of the input |
+| monitorType | String | New monitor type of the input |
+
+---
+
+### InputVolumeMeters
+
+A high-volume event providing volume levels of all active inputs every 50 milliseconds.
+
+- Complexity Rating: `4/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| inputs | Array&lt;Object&gt; | Array of active inputs with their associated volume levels |
+## Scene Items
+
+### SceneItemCreated
+
+A scene item has been created.
+
+- Complexity Rating: `3/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| sceneName | String | Name of the scene the item was added to |
+| sourceName | String | Name of the underlying source (input/scene) |
+| sceneItemId | Number | Numeric ID of the scene item |
+| sceneItemIndex | Number | Index position of the item |
+
+---
+
+### SceneItemRemoved
+
+A scene item has been removed.
+
+This event is not emitted when the scene the item is in is removed.
+
+- Complexity Rating: `3/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| sceneName | String | Name of the scene the item was removed from |
+| sourceName | String | Name of the underlying source (input/scene) |
+| sceneItemId | Number | Numeric ID of the scene item |
+
+---
+
+### SceneItemListReindexed
+
+A scene's item list has been reindexed.
+
+- Complexity Rating: `3/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| sceneName | String | Name of the scene |
+| sceneItems | Array&lt;Object&gt; | Array of scene item objects |
+
+---
+
+### SceneItemEnableStateChanged
+
+A scene item's enable state has changed.
+
+- Complexity Rating: `3/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| sceneName | String | Name of the scene the item is in |
+| sceneItemId | Number | Numeric ID of the scene item |
+| sceneItemEnabled | Boolean | Whether the scene item is enabled (visible) |
+
+---
+
+### SceneItemLockStateChanged
+
+A scene item's lock state has changed.
+
+- Complexity Rating: `3/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| sceneName | String | Name of the scene the item is in |
+| sceneItemId | Number | Numeric ID of the scene item |
+| sceneItemEnabled | Boolean | Whether the scene item is locked |
+
+---
+
+### SceneItemTransformChanged
+
+The transform/crop of a scene item has changed.
+
+- Complexity Rating: `4/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| sceneName | String | The name of the scene the item is in |
+| sceneItemId | Number | Numeric ID of the scene item |
+| sceneItemTransform | Object | New transform/crop info of the scene item |
+## Outputs
+
+### StreamStateChanged
+
+The state of the stream output has changed.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| outputActive | Boolean | Whether the output is active |
+| outputState | String | The specific state of the output |
+
+---
+
+### RecordStateChanged
+
+The state of the record output has changed.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| outputActive | Boolean | Whether the output is active |
+| outputState | String | The specific state of the output |
+
+---
+
+### ReplayBufferStateChanged
+
+The state of the replay buffer output has changed.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| outputActive | Boolean | Whether the output is active |
+| outputState | String | The specific state of the output |
+
+---
+
+### VirtualcamStateChanged
+
+The state of the virtualcam output has changed.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| outputActive | Boolean | Whether the output is active |
+| outputState | String | The specific state of the output |
+
+---
+
+### ReplayBufferSaved
+
+The replay buffer has been saved.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| savedReplayPath | String | Path of the saved replay file |
+## Media Inputs
+
+### MediaInputPlaybackStarted
+
+A media input has started playing.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| inputName | String | Name of the input |
+
+---
+
+### MediaInputPlaybackEnded
+
+A media input has finished playing.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| inputName | String | Name of the input |
+
+---
+
+### MediaInputActionTriggered
+
+An action has been performed on an input.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| inputName | String | Name of the input |
+| mediaAction | String | Action performed on the input. See `ObsMediaInputAction` enum |
+## Ui
+
+### StudioModeStateChanged
+
+Studio mode has been enabled or disabled.
+
+- Complexity Rating: `1/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Data Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| studioModeEnabled | Boolean | True == Enabled, False == Disabled |
 
 
 # Requests
@@ -1394,8 +2022,6 @@ The profile list has changed.
   - [GetHotkeyList](#gethotkeylist)
   - [TriggerHotkeyByName](#triggerhotkeybyname)
   - [TriggerHotkeyByKeySequence](#triggerhotkeybykeysequence)
-  - [GetStudioModeEnabled](#getstudiomodeenabled)
-  - [SetStudioModeEnabled](#setstudiomodeenabled)
   - [Sleep](#sleep)
 - [Config](#config-1)
   - [GetPersistentData](#getpersistentdata)
@@ -1417,7 +2043,7 @@ The profile list has changed.
   - [GetSourceActive](#getsourceactive)
   - [GetSourceScreenshot](#getsourcescreenshot)
   - [SaveSourceScreenshot](#savesourcescreenshot)
-- [Scenes](#scenes)
+- [Scenes](#scenes-1)
   - [GetSceneList](#getscenelist)
   - [GetCurrentProgramScene](#getcurrentprogramscene)
   - [SetCurrentProgramScene](#setcurrentprogramscene)
@@ -1426,7 +2052,7 @@ The profile list has changed.
   - [CreateScene](#createscene)
   - [RemoveScene](#removescene)
   - [SetSceneName](#setscenename)
-- [Inputs](#inputs)
+- [Inputs](#inputs-1)
   - [GetInputList](#getinputlist)
   - [GetInputKindList](#getinputkindlist)
   - [CreateInput](#createinput)
@@ -1446,7 +2072,15 @@ The profile list has changed.
   - [SetInputAudioMonitorType](#setinputaudiomonitortype)
   - [GetInputPropertiesListPropertyItems](#getinputpropertieslistpropertyitems)
   - [PressInputPropertiesButton](#pressinputpropertiesbutton)
-- [Scene Items](#scene-items)
+- [Transitions](#transitions)
+  - [GetTransitionKindList](#gettransitionkindlist)
+  - [GetSceneTransitionList](#getscenetransitionlist)
+  - [GetCurrentSceneTransition](#getcurrentscenetransition)
+  - [SetCurrentSceneTransition](#setcurrentscenetransition)
+  - [SetCurrentSceneTransitionDuration](#setcurrentscenetransitionduration)
+  - [SetCurrentSceneTransitionSettings](#setcurrentscenetransitionsettings)
+  - [TriggerStudioModeTransition](#triggerstudiomodetransition)
+- [Scene Items](#scene-items-1)
   - [GetSceneItemList](#getsceneitemlist)
   - [GetGroupItemList](#getgroupitemlist)
   - [GetSceneItemId](#getsceneitemid)
@@ -1466,6 +2100,23 @@ The profile list has changed.
   - [ToggleStream](#togglestream)
   - [StartStream](#startstream)
   - [StopStream](#stopstream)
+- [Record](#record)
+  - [GetRecordStatus](#getrecordstatus)
+  - [ToggleRecord](#togglerecord)
+  - [StartRecord](#startrecord)
+  - [StopRecord](#stoprecord)
+  - [ToggleRecordPause](#togglerecordpause)
+  - [PauseRecord](#pauserecord)
+  - [ResumeRecord](#resumerecord)
+  - [GetRecordDirectory](#getrecorddirectory)
+- [Media Inputs](#media-inputs-1)
+  - [GetMediaInputStatus](#getmediainputstatus)
+  - [SetMediaInputCursor](#setmediainputcursor)
+  - [OffsetMediaInputCursor](#offsetmediainputcursor)
+  - [TriggerMediaInputAction](#triggermediainputaction)
+- [Ui](#ui-1)
+  - [GetStudioModeEnabled](#getstudiomodeenabled)
+  - [SetStudioModeEnabled](#setstudiomodeenabled)
 
 
 
@@ -1619,40 +2270,6 @@ Triggers a hotkey using a sequence of keys.
 | ?keyModifiers.control | Boolean | Press CTRL | None | Not pressed |
 | ?keyModifiers.alt | Boolean | Press ALT | None | Not pressed |
 | ?keyModifiers.command | Boolean | Press CMD (Mac) | None | Not pressed |
-
----
-
-### GetStudioModeEnabled
-
-Gets whether studio is enabled.
-
-- Complexity Rating: `1/5`
-- Latest Supported RPC Version: `1`
-- Added in v5.0.0
-
-
-**Response Fields:**
-
-| Name | Type  | Description |
-| ---- | :---: | ----------- |
-| studioModeEnabled | Boolean | Whether studio mode is enabled |
-
----
-
-### SetStudioModeEnabled
-
-Enables or disables studio mode
-
-- Complexity Rating: `1/5`
-- Latest Supported RPC Version: `1`
-- Added in v5.0.0
-
-
-**Request Fields:**
-
-| Name | Type  | Description | Value Restrictions | ?Default Behavior |
-| ---- | :---: | ----------- | :----------------: | ----------------- |
-| studioModeEnabled | Boolean | True == Enabled, False == Disabled | None | N/A |
 
 ---
 
@@ -1848,7 +2465,7 @@ Removes a profile. If the current profile is chosen, it will change to a differe
 
 Gets a parameter from the current profile's configuration.
 
-- Complexity Rating: `3/5`
+- Complexity Rating: `4/5`
 - Latest Supported RPC Version: `1`
 - Added in v5.0.0
 
@@ -1874,7 +2491,7 @@ Gets a parameter from the current profile's configuration.
 
 Sets the value of a parameter in the current profile's configuration.
 
-- Complexity Rating: `3/5`
+- Complexity Rating: `4/5`
 - Latest Supported RPC Version: `1`
 - Added in v5.0.0
 
@@ -2645,6 +3262,131 @@ Note: Use this in cases where there is a button in the properties of an input th
 | propertyName | String | Name of the button property to press | None | N/A |
 
 
+## Transitions
+
+### GetTransitionKindList
+
+Gets an array of all available transition kinds.
+
+Similar to `GetInputKindList`
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Response Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| transitionKinds | Array&lt;String&gt; | Array of transition kinds |
+
+---
+
+### GetSceneTransitionList
+
+Gets an array of all scene transitions in OBS.
+
+- Complexity Rating: `3/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Response Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| currentSceneTransitionName | String | Name of the current scene transition. Can be null |
+| currentSceneTransitionKind | String | Kind of the current scene transition. Can be null |
+| transitions | Array&lt;Object&gt; | Array of transitions |
+
+---
+
+### GetCurrentSceneTransition
+
+Gets information about the current scene transition.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Response Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| transitionName | String | Name of the transition |
+| transitionKind | String | Kind of the transition |
+| transitionFixed | Boolean | Whether the transition uses a fixed (unconfigurable) duration |
+| transitionDuration | Number | Configured transition duration in milliseconds. `null` if transition is fixed |
+| transitionConfigurable | Boolean | Whether the transition supports being configured |
+| transitionSettings | Object | Object of settings for the transition. `null` if transition is not configurable |
+
+---
+
+### SetCurrentSceneTransition
+
+Sets the current scene transition.
+
+Small note: While the namespace of scene transitions is generally unique, that uniqueness is not a guarantee as it is with other resources like inputs.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Request Fields:**
+
+| Name | Type  | Description | Value Restrictions | ?Default Behavior |
+| ---- | :---: | ----------- | :----------------: | ----------------- |
+| transitionName | String | Name of the transition to make active | None | N/A |
+
+---
+
+### SetCurrentSceneTransitionDuration
+
+Sets the duration of the current scene transition, if it is not fixed.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Request Fields:**
+
+| Name | Type  | Description | Value Restrictions | ?Default Behavior |
+| ---- | :---: | ----------- | :----------------: | ----------------- |
+| transitionDuration | Number | Duration in milliseconds | >= 50, <= 20000 | N/A |
+
+---
+
+### SetCurrentSceneTransitionSettings
+
+Sets the settings of the current scene transition.
+
+- Complexity Rating: `3/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Request Fields:**
+
+| Name | Type  | Description | Value Restrictions | ?Default Behavior |
+| ---- | :---: | ----------- | :----------------: | ----------------- |
+| transitionSettings | Object | Settings object to apply to the transition. Can be `{}` | None | N/A |
+| ?overlay | Boolean | Whether to overlay over the current settings or replace them | None | true |
+
+---
+
+### TriggerStudioModeTransition
+
+Triggers the current scene transition. Same functionality as the `Transition` button in studio mode.
+
+- Complexity Rating: `1/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
 ## Scene Items
 
 ### GetSceneItemList
@@ -3054,5 +3796,234 @@ Stops the stream output.
 - Complexity Rating: `1/5`
 - Latest Supported RPC Version: `1`
 - Added in v5.0.0
+
+
+## Record
+
+### GetRecordStatus
+
+Gets the status of the record output.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Response Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| outputActive | Boolean | Whether the output is active |
+| ouputPaused | Boolean | Whether the output is paused |
+| outputTimecode | String | Current formatted timecode string for the output |
+| outputDuration | Number | Current duration in milliseconds for the output |
+| outputBytes | Number | Number of bytes sent by the output |
+
+---
+
+### ToggleRecord
+
+Toggles the status of the record output.
+
+- Complexity Rating: `1/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+---
+
+### StartRecord
+
+Starts the record output.
+
+- Complexity Rating: `1/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+---
+
+### StopRecord
+
+Stops the record output.
+
+- Complexity Rating: `1/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+---
+
+### ToggleRecordPause
+
+Toggles pause on the record output.
+
+- Complexity Rating: `1/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+---
+
+### PauseRecord
+
+Pauses the record output.
+
+- Complexity Rating: `1/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+---
+
+### ResumeRecord
+
+Resumes the record output.
+
+- Complexity Rating: `1/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+---
+
+### GetRecordDirectory
+
+Gets the current directory that the record output is set to.
+
+- Complexity Rating: `1/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Response Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| recordDirectory | String | Output directory |
+
+
+## Media Inputs
+
+### GetMediaInputStatus
+
+Gets the status of a media input.
+
+Media States:
+- `OBS_MEDIA_STATE_NONE`
+- `OBS_MEDIA_STATE_PLAYING`
+- `OBS_MEDIA_STATE_OPENING`
+- `OBS_MEDIA_STATE_BUFFERING`
+- `OBS_MEDIA_STATE_PAUSED`
+- `OBS_MEDIA_STATE_STOPPED`
+- `OBS_MEDIA_STATE_ENDED`
+- `OBS_MEDIA_STATE_ERROR`
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Request Fields:**
+
+| Name | Type  | Description | Value Restrictions | ?Default Behavior |
+| ---- | :---: | ----------- | :----------------: | ----------------- |
+| inputName | String | Name of the media input | None | N/A |
+
+
+**Response Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| mediaState | String | State of the media input |
+| mediaDuration | Number | Total duration of the playing media in milliseconds. `null` if not playing |
+| mediaCursor | Number | Position of the cursor in milliseconds. `null` if not playing |
+
+---
+
+### SetMediaInputCursor
+
+Sets the cursor position of a media input.
+
+This request does not perform bounds checking of the cursor position.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Request Fields:**
+
+| Name | Type  | Description | Value Restrictions | ?Default Behavior |
+| ---- | :---: | ----------- | :----------------: | ----------------- |
+| inputName | String | Name of the media input | None | N/A |
+| mediaCursor | Number | New cursor position to set | >= 0 | N/A |
+
+---
+
+### OffsetMediaInputCursor
+
+Offsets the current cursor position of a media input by the specified value.
+
+This request does not perform bounds checking of the cursor position.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Request Fields:**
+
+| Name | Type  | Description | Value Restrictions | ?Default Behavior |
+| ---- | :---: | ----------- | :----------------: | ----------------- |
+| inputName | String | Name of the media input | None | N/A |
+| mediaCursorOffset | Number | Value to offset the current cursor position by | None | N/A |
+
+---
+
+### TriggerMediaInputAction
+
+Triggers an action on a media input.
+
+- Complexity Rating: `2/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Request Fields:**
+
+| Name | Type  | Description | Value Restrictions | ?Default Behavior |
+| ---- | :---: | ----------- | :----------------: | ----------------- |
+| inputName | String | Name of the media input | None | N/A |
+| mediaAction | String | Identifier of the `ObsMediaInputAction` enum | None | N/A |
+
+
+## Ui
+
+### GetStudioModeEnabled
+
+Gets whether studio is enabled.
+
+- Complexity Rating: `1/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Response Fields:**
+
+| Name | Type  | Description |
+| ---- | :---: | ----------- |
+| studioModeEnabled | Boolean | Whether studio mode is enabled |
+
+---
+
+### SetStudioModeEnabled
+
+Enables or disables studio mode
+
+- Complexity Rating: `1/5`
+- Latest Supported RPC Version: `1`
+- Added in v5.0.0
+
+
+**Request Fields:**
+
+| Name | Type  | Description | Value Restrictions | ?Default Behavior |
+| ---- | :---: | ----------- | :----------------: | ----------------- |
+| studioModeEnabled | Boolean | True == Enabled, False == Disabled | None | N/A |
 
 

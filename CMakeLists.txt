@@ -103,6 +103,7 @@ set(obs-websocket_SOURCES
 	src/eventhandler/EventHandler_Outputs.cpp
 	src/eventhandler/EventHandler_SceneItems.cpp
 	src/eventhandler/EventHandler_MediaInputs.cpp
+	src/eventhandler/EventHandler_Ui.cpp
 	src/requesthandler/RequestHandler.cpp
 	src/requesthandler/RequestBatchHandler.cpp
 	src/requesthandler/RequestHandler_General.cpp
@@ -110,10 +111,13 @@ set(obs-websocket_SOURCES
 	src/requesthandler/RequestHandler_Sources.cpp
 	src/requesthandler/RequestHandler_Scenes.cpp
 	src/requesthandler/RequestHandler_Inputs.cpp
+	src/requesthandler/RequestHandler_Transitions.cpp
+	src/requesthandler/RequestHandler_Filters.cpp
 	src/requesthandler/RequestHandler_SceneItems.cpp
 	src/requesthandler/RequestHandler_Stream.cpp
 	src/requesthandler/RequestHandler_Record.cpp
 	src/requesthandler/RequestHandler_MediaInputs.cpp
+	src/requesthandler/RequestHandler_Ui.cpp
 	src/requesthandler/rpc/Request.cpp
 	src/requesthandler/rpc/RequestBatchRequest.cpp
 	src/requesthandler/rpc/RequestResult.cpp

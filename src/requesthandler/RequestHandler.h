@@ -51,8 +51,6 @@ class RequestHandler {
 		RequestResult GetHotkeyList(const Request&);
 		RequestResult TriggerHotkeyByName(const Request&);
 		RequestResult TriggerHotkeyByKeySequence(const Request&);
-		RequestResult GetStudioModeEnabled(const Request&);
-		RequestResult SetStudioModeEnabled(const Request&);
 		RequestResult Sleep(const Request&);
 
 		// Config
@@ -108,6 +106,15 @@ class RequestHandler {
 		RequestResult GetInputPropertiesListPropertyItems(const Request&);
 		RequestResult PressInputPropertiesButton(const Request&);
 
+		// Transitions
+		RequestResult GetTransitionKindList(const Request&);
+		RequestResult GetSceneTransitionList(const Request&);
+		RequestResult GetCurrentSceneTransition(const Request&);
+		RequestResult SetCurrentSceneTransition(const Request&);
+		RequestResult SetCurrentSceneTransitionDuration(const Request&);
+		RequestResult SetCurrentSceneTransitionSettings(const Request&);
+		RequestResult TriggerStudioModeTransition(const Request&);
+
 		// Scene Items
 		RequestResult GetSceneItemList(const Request&);
 		RequestResult GetGroupSceneItemList(const Request&);
@@ -145,6 +152,10 @@ class RequestHandler {
 		RequestResult SetMediaInputCursor(const Request&);
 		RequestResult OffsetMediaInputCursor(const Request&);
 		RequestResult TriggerMediaInputAction(const Request&);
+
+		// Ui
+		RequestResult GetStudioModeEnabled(const Request&);
+		RequestResult SetStudioModeEnabled(const Request&);
 
 		SessionPtr _session;
 		static const std::map<std::string, RequestMethodHandler> _handlerMap;

@@ -22,7 +22,6 @@ with this program. If not, see <https://www.gnu.org/licenses/>
 #include <atomic>
 #include <obs.hpp>
 #include <obs-frontend-api.h>
-#include <util/platform.h>
 
 #include "types/EventSubscription.h"
 #include "../obs-websocket.h"
@@ -95,7 +94,7 @@ class EventHandler
 		void HandleSceneCreated(obs_source_t *source);
 		void HandleSceneRemoved(obs_source_t *source);
 		void HandleSceneNameChanged(obs_source_t *source, std::string oldSceneName, std::string sceneName);
-		void HandleCurrentSceneChanged();
+		void HandleCurrentProgramSceneChanged();
 		void HandleCurrentPreviewSceneChanged();
 		void HandleSceneListChanged();
 
@@ -111,11 +110,6 @@ class EventHandler
 		static void HandleInputAudioSyncOffsetChanged(void *param, calldata_t *data); // Direct callback
 		static void HandleInputAudioTracksChanged(void *param, calldata_t *data); // Direct callback
 		static void HandleInputAudioMonitorTypeChanged(void *param, calldata_t *data); // Direct callback
-
-		// Transitions
-		void HandleTransitionCreated(obs_source_t *source);
-		void HandleTransitionRemoved(obs_source_t *source);
-		void HandleTransitionNameChanged(obs_source_t *source, std::string oldTransitionName, std::string transitionName);
 
 		// Outputs
 		void HandleStreamStateChanged(ObsOutputState state);

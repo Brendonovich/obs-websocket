@@ -143,26 +143,6 @@ std::vector<json> Utils::Obs::ArrayHelper::GetSceneItemList(obs_scene_t *scene, 
 	return enumData.first;
 }
 
-std::vector<json> Utils::Obs::ArrayHelper::GetTransitionList()
-{
-	obs_frontend_source_list transitionList = {};
-	obs_frontend_get_transitions(&transitionList);
-
-	std::vector<json> ret;
-	for (size_t i = 0; i < transitionList.sources.num; i++) {
-		obs_source_t *transition = transitionList.sources.array[i];
-		json transitionJson;
-		transitionJson["transitionName"] = obs_source_get_name(transition);
-		transitionJson["transitionKind"] = obs_source_get_id(transition);
-		transitionJson["transitionFixed"] = obs_transition_fixed(transition);
-		ret.push_back(transitionJson);
-	}
-
-	obs_frontend_source_list_free(&transitionList);
-
-	return ret;
-}
-
 struct EnumInputInfo {
 	std::string inputKind; // For searching by input kind
 	std::vector<json> inputs;
@@ -217,6 +197,65 @@ std::vector<std::string> Utils::Obs::ArrayHelper::GetInputKindList(bool unversio
 		else
 			ret.push_back(kind);
 	}
+
+	return ret;
+}
+
+std::vector<json> Utils::Obs::ArrayHelper::GetListPropertyItems(obs_property_t *property)
+{
+	std::vector<json> ret;
+
+	enum obs_combo_format itemFormat = obs_property_list_format(property);
+	size_t itemCount = obs_property_list_item_count(property);
+
+	for (size_t i = 0; i < itemCount; i++) {
+		json itemData;
+		itemData["itemName"] = obs_property_list_item_name(property, i);
+		itemData["itemEnabled"] = !obs_property_list_item_disabled(property, i);
+		if (itemFormat == OBS_COMBO_FORMAT_INT) {
+			itemData["itemValue"] = obs_property_list_item_int(property, i);
+		} else if (itemFormat == OBS_COMBO_FORMAT_FLOAT) {
+			itemData["itemValue"] = obs_property_list_item_float(property, i);
+		} else if (itemFormat == OBS_COMBO_FORMAT_STRING) {
+			itemData["itemValue"] = obs_property_list_item_string(property, i);
+		} else {
+			itemData["itemValue"] = nullptr;
+		}
+		ret.push_back(itemData);
+	}
+
+	return ret;
+}
+
+std::vector<std::string> Utils::Obs::ArrayHelper::GetTransitionKindList()
+{
+	std::vector<std::string> ret;
+
+	size_t idx = 0;
+	const char *kind;
+	while (obs_enum_transition_types(idx++, &kind))
+		ret.emplace_back(kind);
+
+	return ret;
+}
+
+std::vector<json> Utils::Obs::ArrayHelper::GetSceneTransitionList()
+{
+	obs_frontend_source_list transitionList = {};
+	obs_frontend_get_transitions(&transitionList);
+
+	std::vector<json> ret;
+	for (size_t i = 0; i < transitionList.sources.num; i++) {
+		obs_source_t *transition = transitionList.sources.array[i];
+		json transitionJson;
+		transitionJson["transitionName"] = obs_source_get_name(transition);
+		transitionJson["transitionKind"] = obs_source_get_id(transition);
+		transitionJson["transitionFixed"] = obs_transition_fixed(transition);
+		transitionJson["transitionConfigurable"] = obs_source_configurable(transition);
+		ret.push_back(transitionJson);
+	}
+
+	obs_frontend_source_list_free(&transitionList);
 
 	return ret;
 }

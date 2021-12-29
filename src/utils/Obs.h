@@ -77,12 +77,75 @@ enum ObsOutputState {
 };
 
 enum ObsMediaInputAction {
+	/**
+	* No action.
+	*
+	* @enumIdentifier OBS_WEBSOCKET_MEDIA_INPUT_ACTION_NONE
+	* @enumType ObsMediaInputAction
+	* @rpcVersion 1
+	* @initialVersion 5.0.0
+	* @api enums
+	*/
 	OBS_WEBSOCKET_MEDIA_INPUT_ACTION_NONE,
+	/**
+	* Play the media input.
+	*
+	* @enumIdentifier OBS_WEBSOCKET_MEDIA_INPUT_ACTION_PLAY
+	* @enumType ObsMediaInputAction
+	* @rpcVersion 1
+	* @initialVersion 5.0.0
+	* @api enums
+	*/
 	OBS_WEBSOCKET_MEDIA_INPUT_ACTION_PLAY,
+	/**
+	* Pause the media input.
+	*
+	* @enumIdentifier OBS_WEBSOCKET_MEDIA_INPUT_ACTION_PAUSE
+	* @enumType ObsMediaInputAction
+	* @rpcVersion 1
+	* @initialVersion 5.0.0
+	* @api enums
+	*/
 	OBS_WEBSOCKET_MEDIA_INPUT_ACTION_PAUSE,
+	/**
+	* Stop the media input.
+	*
+	* @enumIdentifier OBS_WEBSOCKET_MEDIA_INPUT_ACTION_STOP
+	* @enumType ObsMediaInputAction
+	* @rpcVersion 1
+	* @initialVersion 5.0.0
+	* @api enums
+	*/
 	OBS_WEBSOCKET_MEDIA_INPUT_ACTION_STOP,
+	/**
+	* Restart the media input.
+	*
+	* @enumIdentifier OBS_WEBSOCKET_MEDIA_INPUT_ACTION_RESTART
+	* @enumType ObsMediaInputAction
+	* @rpcVersion 1
+	* @initialVersion 5.0.0
+	* @api enums
+	*/
 	OBS_WEBSOCKET_MEDIA_INPUT_ACTION_RESTART,
+	/**
+	* Go to the next playlist item.
+	*
+	* @enumIdentifier OBS_WEBSOCKET_MEDIA_INPUT_ACTION_NEXT
+	* @enumType ObsMediaInputAction
+	* @rpcVersion 1
+	* @initialVersion 5.0.0
+	* @api enums
+	*/
 	OBS_WEBSOCKET_MEDIA_INPUT_ACTION_NEXT,
+	/**
+	* Go to the previous playlist item.
+	*
+	* @enumIdentifier OBS_WEBSOCKET_MEDIA_INPUT_ACTION_PREVIOUS
+	* @enumType ObsMediaInputAction
+	* @rpcVersion 1
+	* @initialVersion 5.0.0
+	* @api enums
+	*/
 	OBS_WEBSOCKET_MEDIA_INPUT_ACTION_PREVIOUS,
 };
 
@@ -95,6 +158,7 @@ namespace Utils {
 			std::string GetCurrentProfilePath();
 			std::string GetCurrentRecordOutputPath();
 			std::string GetSourceType(obs_source_t *source);
+			std::string GetInputMonitorType(enum obs_monitoring_type monitorType);
 			std::string GetInputMonitorType(obs_source_t *input);
 			std::string GetMediaInputState(obs_source_t *input);
 			std::string GetLastReplayBufferFilePath();
@@ -120,9 +184,11 @@ namespace Utils {
 			std::vector<std::string> GetHotkeyNameList();
 			std::vector<json> GetSceneList();
 			std::vector<json> GetSceneItemList(obs_scene_t *scene, bool basic = false);
-			std::vector<json> GetTransitionList();
 			std::vector<json> GetInputList(std::string inputKind = "");
 			std::vector<std::string> GetInputKindList(bool unversioned = false, bool includeDisabled = false);
+			std::vector<json> GetListPropertyItems(obs_property_t *property);
+			std::vector<std::string> GetTransitionKindList();
+			std::vector<json> GetSceneTransitionList();
 		}
 
 		namespace ObjectHelper {
@@ -132,6 +198,7 @@ namespace Utils {
 
 		namespace SearchHelper {
 			obs_hotkey_t *GetHotkeyByName(std::string name);
+			obs_source_t *GetSceneTransitionByName(std::string name); // Increments source ref. Use OBSSourceAutoRelease
 			obs_sceneitem_t *GetSceneItemByName(obs_scene_t *scene, std::string name); // Increments ref. Use OBSSceneItemAutoRelease
 		}
 
