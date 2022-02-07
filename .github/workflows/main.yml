@@ -6,6 +6,7 @@ on:
       - 'docs/**'
     branches:
       - master
+      - sceneify-build
     tags:
       - '[45].[0-9]+.[0-9]+*'
   pull_request:
